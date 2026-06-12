@@ -105,10 +105,11 @@ export default function ScribbleCursor() {
 
   const enabled = useMemo(() => {
     if (typeof window === "undefined") return false;
+    const isMobile = window.innerWidth < 768;
     const fine = window.matchMedia?.("(pointer: fine)")?.matches ?? true;
     const reduce =
       window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
-    return fine && !reduce;
+    return fine && !reduce && !isMobile;
   }, []);
 
   useEffect(() => {
