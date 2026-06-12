@@ -20,7 +20,7 @@ const person = {
   name: "RAJAT MAHADULE",
   role: "Full-Stack SDE",
   location: "Nagpur, Maharashtra",
-  experience: "SDE Intern @ Synergim LLC (USA)",
+  experience: "Ex-SDE Intern @ Synergim LLC (USA)",
   education: "B.Tech @ GHRCEM, Nagpur (CGPA: 8.26)",
   summary: "National Top 6 Finalist at <em>Smart India Hackathon 2024</em>. Shipped production features on cart-bit.com for real users. Proficient in <em>React</em>, <em>React Native</em>, <em>Firebase</em>, and <em>Java</em>.",
   linkedinHref: "https://www.linkedin.com/in/rajat-mahadule-5b4650257/",
@@ -204,17 +204,30 @@ function CustomCursor({ enabled }) {
     mass: 0.2,
   });
 
+  const [isMobileOrTouch, setIsMobileOrTouch] = useState(true);
+
   useEffect(() => {
-    if (!enabled) return;
+    const checkDevice = () => {
+      const isMobile = window.innerWidth < 768;
+      const hasFinePointer = window.matchMedia?.("(pointer: fine)")?.matches ?? true;
+      setIsMobileOrTouch(isMobile || !hasFinePointer);
+    };
+    checkDevice();
+    window.addEventListener("resize", checkDevice);
+    return () => window.removeEventListener("resize", checkDevice);
+  }, []);
+
+  useEffect(() => {
+    if (!enabled || isMobileOrTouch) return;
     const move = (e) => {
       cursorX.set(e.clientX);
       cursorY.set(e.clientY);
     };
     window.addEventListener("pointermove", move);
     return () => window.removeEventListener("pointermove", move);
-  }, [enabled, cursorX, cursorY]);
+  }, [enabled, isMobileOrTouch, cursorX, cursorY]);
 
-  if (!enabled) return null;
+  if (!enabled || isMobileOrTouch) return null;
   return (
     <motion.div
       className="pointer-events-none fixed top-0 left-0 z-[9999] h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white mix-blend-difference"
@@ -424,18 +437,24 @@ function InfoSection() {
           <p className="text-xl text-white/60 leading-relaxed font-light max-w-xl">
             National Top 6 Finalist at <em>Smart India Hackathon 2024</em>. Shipped production features for real users. Proficient in <em>React</em>, <em>React Native</em>, and <em>Cloud Infrastructure</em>.
           </p>
-          <div className="mt-16 grid grid-cols-2 gap-12">
+          <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 gap-12">
             <div>
               <div className="text-[10px] text-white/40 mb-2 uppercase font-mono tracking-widest">Education</div>
-              <div className="text-white/80">{person.education}</div>
+              <div className="text-white/80">
+                B.Tech <span className="whitespace-nowrap">@ GHRCEM</span>, Nagpur (CGPA: 8.26)
+              </div>
             </div>
             <div>
               <div className="text-[10px] text-white/40 mb-2 uppercase font-mono tracking-widest">Experience</div>
-              <div className="text-white/80">SDE Intern @ Synergim LLC</div>
+              <div className="text-white/80">
+                Ex-SDE Intern <span className="whitespace-nowrap">@ Synergim LLC</span>
+              </div>
             </div>
             <div>
               <div className="text-[10px] text-white/40 mb-2 uppercase font-mono tracking-widest">Beyond Code</div>
-              <div className="text-white/80">Content Creator @ <a href={person.instagramHref} target="_blank" rel="noreferrer" className="underline hover:text-[#D4AF37] transition-colors">rajat.liftss</a></div>
+              <div className="text-white/80">
+                Content Creator <span className="whitespace-nowrap">@ <a href={person.instagramHref} target="_blank" rel="noreferrer" className="underline hover:text-[#D4AF37] transition-colors">rajat.liftss</a></span>
+              </div>
             </div>
           </div>
         </div>
